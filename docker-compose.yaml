@@ -1,0 +1,31 @@
+services:
+  
+  web:
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    environment:
+      - "ConnectionStrings__Postgres=Host=ydb;Port=5432;Username=root;Password=1234;Database=local"
+      - "Urls=http://*:80"
+
+#  postgres:
+#    image: postgres:latest
+#    ports:
+#      - "5432:5432"
+#    environment:
+#      - "POSTGRES_PASSWORD=1234"
+#      - "POSTGRES_USER=root"
+#      - "POSTGRES_DB=local"
+  
+  ydb:
+    image: ghcr.io/ydb-platform/local-ydb:nightly
+    ports:
+      - "5432:5432"
+      - "8765:8765"
+    environment:
+      - "YDB_USE_IN_MEMORY_PDISKS=true"
+      - "POSTGRES_USER=${YDB_PG_USER:-root}"
+      - "POSTGRES_PASSWORD=${YDB_PG_PASSWORD:-1234}"
+      - "YDB_FEATURE_FLAGS=enable_temp_tables"
+      - "YDB_TABLE_ENABLE_PREPARED_DDL=true"
